@@ -1,9 +1,11 @@
 package com.insane.mattercrystals.fundamentals;
 
+import lombok.ToString;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
 
+@ToString
 public class BasicStack {
 	
 	public Item item;
@@ -11,6 +13,7 @@ public class BasicStack {
 	public Fundamental fundamentals;
 	private int id;
 	
+
 	public BasicStack(ItemStack stack)
 	{
 		this.item = stack.getItem();
@@ -33,5 +36,10 @@ public class BasicStack {
 	{
 		return this.id;
 	}
-
+	
+	public String toString()
+	{
+		return this.item.getUnlocalizedName()+":"+this.meta;
+	}
+	
 }

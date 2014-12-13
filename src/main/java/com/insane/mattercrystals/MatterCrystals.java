@@ -1,5 +1,8 @@
 package com.insane.mattercrystals;
 
+import java.io.File;
+import java.io.IOException;
+
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
@@ -10,6 +13,7 @@ import net.minecraftforge.oredict.OreDictionary;
 
 import com.google.gson.Gson;
 import com.insane.mattercrystals.blocks.MCBlocks;
+import com.insane.mattercrystals.config.Config;
 import com.insane.mattercrystals.fundamentals.BasicStack;
 import com.insane.mattercrystals.fundamentals.Fundamental;
 import com.insane.mattercrystals.fundamentals.FundamentalList;
@@ -41,6 +45,9 @@ public class MatterCrystals {
 	
 	public static Gson gson = new Gson();
 	
+	public static File configDir;
+	public static File fundamentalFile;
+	
 	@Mod.EventHandler
 	public void preInit(FMLPreInitializationEvent event)
 	{
@@ -48,6 +55,10 @@ public class MatterCrystals {
 		MCItems.registerItems();
 		OreDict.registerOreDict();
 		proxy.initRenderers();
+		
+		configDir = new File(event.getSuggestedConfigurationFile().getParentFile().getAbsolutePath() + "/" + MODID);
+		fundamentalFile = new File(configDir.getAbsolutePath() + "/fundamentals.json");
+		fundamentalFile.mkdirs();
 		
 		MinecraftForge.EVENT_BUS.register(new TooltipHandler());
 	}
@@ -66,6 +77,8 @@ public class MatterCrystals {
 		FundamentalList.addFundamentalsToStack(new ItemStack(Blocks.log2, 1, OreDictionary.WILDCARD_VALUE), new Fundamental(8, 0, 0, 0, 0));
 		Fundamentals.getCostsFromRecipes(4);
 		
+		Config.writeFundamentals(fundamentalFile);
+		
 	}
 	
 	public static CreativeTabs tabMC = new CreativeTabs("matterCrystals")
@@ -77,5 +90,6 @@ public class MatterCrystals {
 			return Items.baked_potato;
 		}
 	};
+	
 
 }
