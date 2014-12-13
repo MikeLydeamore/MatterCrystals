@@ -7,14 +7,14 @@ import net.minecraft.item.ItemStack;
 
 public class FundamentalList {
 
-	public static HashMap<BasicStack, Fundamental> fundamentalList = new HashMap<BasicStack, Fundamental>(); 
+	public static HashMap<BasicStack, FundamentalData> fundamentalList = new HashMap<BasicStack, FundamentalData>(); 
 
 	public FundamentalList()
 	{
 
 	}
 
-	public static void addFundamentalsToStack(ItemStack stack, Fundamental fund)
+	public static void addFundamentalsToStack(ItemStack stack, FundamentalData fund)
 	{
 		BasicStack bs = new BasicStack(stack);
 		if (!fundamentalList.containsKey(bs))
@@ -23,7 +23,7 @@ public class FundamentalList {
 		}
 		else
 		{
-			Fundamental f = fundamentalList.get(bs);
+			FundamentalData f = fundamentalList.get(bs);
 			if (fund.total() > f.total()) //Worse case
 			{
 				fundamentalList.put(bs, fund);
@@ -31,7 +31,7 @@ public class FundamentalList {
 		}
 	}
 
-	public static Fundamental getFundamentalsFromStack(ItemStack stack)
+	public static FundamentalData getFundamentalsFromStack(ItemStack stack)
 	{
 		if (stack==null)
 		{

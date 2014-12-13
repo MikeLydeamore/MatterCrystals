@@ -3,6 +3,8 @@ package com.insane.mattercrystals;
 import java.io.File;
 import java.io.IOException;
 
+import org.apache.commons.lang3.tuple.Pair;
+
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
@@ -16,6 +18,8 @@ import com.insane.mattercrystals.blocks.MCBlocks;
 import com.insane.mattercrystals.config.Config;
 import com.insane.mattercrystals.fundamentals.BasicStack;
 import com.insane.mattercrystals.fundamentals.Fundamental;
+import com.insane.mattercrystals.fundamentals.Fundamental.Type;
+import com.insane.mattercrystals.fundamentals.FundamentalData;
 import com.insane.mattercrystals.fundamentals.FundamentalList;
 import com.insane.mattercrystals.fundamentals.Fundamentals;
 import com.insane.mattercrystals.handlers.TooltipHandler;
@@ -57,8 +61,8 @@ public class MatterCrystals {
 		proxy.initRenderers();
 		
 		configDir = new File(event.getSuggestedConfigurationFile().getParentFile().getAbsolutePath() + "/" + MODID);
+		configDir.mkdirs();
 		fundamentalFile = new File(configDir.getAbsolutePath() + "/fundamentals.json");
-		fundamentalFile.mkdirs();
 		
 		MinecraftForge.EVENT_BUS.register(new TooltipHandler());
 	}
@@ -72,9 +76,9 @@ public class MatterCrystals {
 	@Mod.EventHandler
 	public void postInit(FMLPostInitializationEvent event)
 	{
-		FundamentalList.addFundamentalsToStack(new ItemStack(Blocks.cobblestone, 1, OreDictionary.WILDCARD_VALUE), new Fundamental(0,0,0,1,0));
-		FundamentalList.addFundamentalsToStack(new ItemStack(Blocks.log, 1, OreDictionary.WILDCARD_VALUE), new Fundamental(8, 0, 0, 0, 0));
-		FundamentalList.addFundamentalsToStack(new ItemStack(Blocks.log2, 1, OreDictionary.WILDCARD_VALUE), new Fundamental(8, 0, 0, 0, 0));
+		FundamentalList.addFundamentalsToStack(new ItemStack(Blocks.cobblestone, 1, OreDictionary.WILDCARD_VALUE), new FundamentalData(Pair.of(Type.STONE, 1)));
+		FundamentalList.addFundamentalsToStack(new ItemStack(Blocks.log, 1, OreDictionary.WILDCARD_VALUE), new FundamentalData(Pair.of(Type.EARTH, 8)));
+		FundamentalList.addFundamentalsToStack(new ItemStack(Blocks.log2, 1, OreDictionary.WILDCARD_VALUE), new FundamentalData(Pair.of(Type.EARTH, 8)));
 		Fundamentals.getCostsFromRecipes(4);
 		
 		Config.writeFundamentals(fundamentalFile);

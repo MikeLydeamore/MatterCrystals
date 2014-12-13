@@ -6,6 +6,9 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.tuple.Pair;
+
+import com.insane.mattercrystals.fundamentals.Fundamental.Type;
 
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
@@ -111,31 +114,29 @@ public class Fundamentals {
 	}
 
 	public static void addCostFromRecipe(ItemStack output, ItemStack[] ingredients)
-	{
-		int earth=0, fire=0, water=0, stone=0, air = 0;
+	{;
 		int itemCounter=0, fundCounter=0;
 		int stackSize = output.stackSize;
+		FundamentalData newData = new FundamentalData();
 
 		for (int i=0; i<ingredients.length; i++)
 		{
-			Fundamental f = FundamentalList.getFundamentalsFromStack(ingredients[i]);
+			FundamentalData f = FundamentalList.getFundamentalsFromStack(ingredients[i]);
 			if (ingredients[i]!=null)
 				itemCounter++;
 
 			if (f != null)
 			{
-				earth += f.EARTH;
-				fire += f.FIRE;
-				water += f.WATER;
-				stone += f.STONE;
-				air += f.AIR;
+				for (Type t : Type.values())
+					newData.addToValue(t, f.getValue(t));
 				fundCounter++;
 			}
 		}
 
-		if (fundCounter == itemCounter && fundCounter != 0 && (earth+fire+water+stone+air)/stackSize != 0) // No 0 counters here!
+		if (fundCounter == itemCounter && fundCounter != 0) // No 0 counters here!
 		{
-			FundamentalList.addFundamentalsToStack(output, new Fundamental(earth/stackSize,fire/stackSize,water/stackSize,stone/stackSize,air/stackSize));
+			newData.correctStackSize(stackSize);
+			FundamentalList.addFundamentalsToStack(output, newData);
 		}
 	}
 

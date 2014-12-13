@@ -1,21 +1,39 @@
 package com.insane.mattercrystals.fundamentals;
 
+import net.minecraft.util.StatCollector;
+
 public class Fundamental {
 	
-	public int EARTH, FIRE, WATER, STONE, AIR;
-	
-	public Fundamental(int earth, int fire, int water, int stone, int air)
+	public static final int length = Type.values().length;
+
+	public enum Type
 	{
-		this.EARTH = earth;
-		this.FIRE = fire;
-		this.WATER = water;
-		this.STONE = stone;
-		this.AIR = air;
+		EARTH, FIRE, WATER, STONE, AIR;
 	}
-	
-	public int total()
+
+	public static String getTranslatedString(Type t)
 	{
-		return EARTH+FIRE+WATER+STONE+AIR;
+		String ret = "string.fundamental";
+		switch (t)
+		{
+		case EARTH:
+			ret += "Earth";
+			break;
+		case FIRE:
+			ret += "Fire";
+			break;
+		case WATER:
+			ret += "Water";
+			break;
+		case STONE:
+			ret += "Stone";
+			break;
+		case AIR:
+			ret += "Air";
+		}
+		
+		return StatCollector.translateToLocal(ret);
+
 	}
 
 }
