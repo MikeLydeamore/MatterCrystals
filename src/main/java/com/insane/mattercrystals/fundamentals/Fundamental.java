@@ -9,31 +9,17 @@ public class Fundamental {
 	public enum Type
 	{
 		EARTH, FIRE, WATER, STONE, AIR;
-	}
-
-	public static String getTranslatedString(Type t)
-	{
-		String ret = "string.fundamental";
-		switch (t)
+		
+		private String name;
+		
+		public Type()
 		{
-		case EARTH:
-			ret += "Earth";
-			break;
-		case FIRE:
-			ret += "Fire";
-			break;
-		case WATER:
-			ret += "Water";
-			break;
-		case STONE:
-			ret += "Stone";
-			break;
-		case AIR:
-			ret += "Air";
+			name = StringUtils.capitalize(name().toLowerCase());
 		}
 		
-		return StatCollector.translateToLocal(ret);
-
+		public String getLocalizedName()
+		{
+			return StatCollector.translateToLocal("string.fundamental" + name);
+		}
 	}
-
 }
