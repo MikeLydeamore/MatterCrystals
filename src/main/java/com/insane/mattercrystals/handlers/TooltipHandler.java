@@ -1,6 +1,5 @@
 package com.insane.mattercrystals.handlers;
 
-import com.insane.mattercrystals.fundamentals.Fundamental;
 import com.insane.mattercrystals.fundamentals.Fundamental.Type;
 import com.insane.mattercrystals.fundamentals.FundamentalData;
 import com.insane.mattercrystals.fundamentals.FundamentalList;
@@ -20,7 +19,8 @@ public class TooltipHandler {
 			event.toolTip.add(StatCollector.translateToLocal("string.cost"));
 			for (Type t : Type.values())
 			{
-				event.toolTip.add("  "+Fundamental.getTranslatedString(t)+": "+f.getValue(t));
+				if (f.getValue(t) != 0)
+					event.toolTip.add("  "+t.getLocalizedName()+": "+f.getValue(t));
 			}
 		}
 	}

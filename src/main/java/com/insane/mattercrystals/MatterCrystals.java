@@ -51,6 +51,9 @@ public class MatterCrystals {
 	
 	public static File configDir;
 	public static File fundamentalFile;
+	public static File configFile;
+	
+	public static Config config;
 	
 	@Mod.EventHandler
 	public void preInit(FMLPreInitializationEvent event)
@@ -60,9 +63,12 @@ public class MatterCrystals {
 		OreDict.registerOreDict();
 		proxy.initRenderers();
 		
+		config = new Config();
+		
 		configDir = new File(event.getSuggestedConfigurationFile().getParentFile().getAbsolutePath() + "/" + MODID);
 		configDir.mkdirs();
 		fundamentalFile = new File(configDir.getAbsolutePath() + "/fundamentals.json");
+		configFile = new File(configDir.getAbsolutePath()+"/config.cfg");
 		
 		MinecraftForge.EVENT_BUS.register(new TooltipHandler());
 	}
@@ -76,12 +82,14 @@ public class MatterCrystals {
 	@Mod.EventHandler
 	public void postInit(FMLPostInitializationEvent event)
 	{
-		FundamentalList.addFundamentalsToStack(new ItemStack(Blocks.cobblestone, 1, OreDictionary.WILDCARD_VALUE), new FundamentalData(Pair.of(Type.STONE, 1)));
-		FundamentalList.addFundamentalsToStack(new ItemStack(Blocks.log, 1, OreDictionary.WILDCARD_VALUE), new FundamentalData(Pair.of(Type.EARTH, 8)));
-		FundamentalList.addFundamentalsToStack(new ItemStack(Blocks.log2, 1, OreDictionary.WILDCARD_VALUE), new FundamentalData(Pair.of(Type.EARTH, 8)));
-		Fundamentals.getCostsFromRecipes(4);
+		Config.readFundamentals(fundamentalFile);
 		
-		Config.writeFundamentals(fundamentalFile);
+		//FundamentalList.addFundamentalsToStack(new ItemStack(Blocks.cobblestone, 1, OreDictionary.WILDCARD_VALUE), new FundamentalData(Pair.of(Type.STONE, 1)));
+		//FundamentalList.addFundamentalsToStack(new ItemStack(Blocks.log, 1, OreDictionary.WILDCARD_VALUE), new FundamentalData(Pair.of(Type.EARTH, 8)));
+		//FundamentalList.addFundamentalsToStack(new ItemStack(Blocks.log2, 1, OreDictionary.WILDCARD_VALUE), new FundamentalData(Pair.of(Type.EARTH, 8)));
+		//Fundamentals.getCostsFromRecipes(4);
+		
+		//Config.writeFundamentals(fundamentalFile);
 		
 	}
 	

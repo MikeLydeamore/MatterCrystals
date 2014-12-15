@@ -1,6 +1,9 @@
 package com.insane.mattercrystals.fundamentals;
 
+import org.apache.commons.lang3.StringUtils;
+
 import net.minecraft.util.StatCollector;
+
 
 public class Fundamental {
 	
@@ -12,7 +15,7 @@ public class Fundamental {
 		
 		private String name;
 		
-		public Type()
+		Type()
 		{
 			name = StringUtils.capitalize(name().toLowerCase());
 		}
