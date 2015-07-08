@@ -1,7 +1,6 @@
 package com.insane.mattercrystals;
 
 import java.io.File;
-import java.io.IOException;
 
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -16,14 +15,17 @@ import net.minecraftforge.oredict.OreDictionary;
 import com.google.gson.Gson;
 import com.insane.mattercrystals.blocks.MCBlocks;
 import com.insane.mattercrystals.config.Config;
-import com.insane.mattercrystals.fundamentals.BasicStack;
-import com.insane.mattercrystals.fundamentals.Fundamental;
+import com.insane.mattercrystals.fluids.MCFluids;
 import com.insane.mattercrystals.fundamentals.Fundamental.Type;
 import com.insane.mattercrystals.fundamentals.FundamentalData;
 import com.insane.mattercrystals.fundamentals.FundamentalList;
 import com.insane.mattercrystals.fundamentals.Fundamentals;
+import com.insane.mattercrystals.fundamentals.VanillaCrafting;
+import com.insane.mattercrystals.fundamentals.VanillaFurnace;
+import com.insane.mattercrystals.gui.GuiHandler;
 import com.insane.mattercrystals.handlers.TooltipHandler;
 import com.insane.mattercrystals.items.MCItems;
+import com.insane.mattercrystals.network.PacketHandler;
 import com.insane.mattercrystals.util.OreDict;
 
 import cpw.mods.fml.common.Mod;
@@ -31,13 +33,14 @@ import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 @Mod(modid=MatterCrystals.MODID, name="MatterCrystals", version="0.0.1")
 public class MatterCrystals {
 	
-	public static final String MODID = "MatterCrystals";
+	public static final String MODID = "mattercrystals";
 	
 	@Mod.Instance(MODID)
 	public static MatterCrystals instance;
@@ -60,6 +63,7 @@ public class MatterCrystals {
 	{
 		MCBlocks.registerBlocks();
 		MCItems.registerItems();
+		MCFluids.registerFluids();
 		OreDict.registerOreDict();
 		proxy.initRenderers();
 		
@@ -70,13 +74,16 @@ public class MatterCrystals {
 		fundamentalFile = new File(configDir.getAbsolutePath() + "/fundamentals.json");
 		configFile = new File(configDir.getAbsolutePath()+"/config.cfg");
 		
+		Config.doNormalConfig(configFile);
+		
 		MinecraftForge.EVENT_BUS.register(new TooltipHandler());
 	}
 	
 	@Mod.EventHandler
 	public void init(FMLInitializationEvent event)
 	{
-		
+		PacketHandler.init();
+		NetworkRegistry.INSTANCE.registerGuiHandler(this, new GuiHandler());
 	}
 	
 	@Mod.EventHandler
@@ -84,12 +91,18 @@ public class MatterCrystals {
 	{
 		Config.readFundamentals(fundamentalFile);
 		
-		//FundamentalList.addFundamentalsToStack(new ItemStack(Blocks.cobblestone, 1, OreDictionary.WILDCARD_VALUE), new FundamentalData(Pair.of(Type.STONE, 1)));
-		//FundamentalList.addFundamentalsToStack(new ItemStack(Blocks.log, 1, OreDictionary.WILDCARD_VALUE), new FundamentalData(Pair.of(Type.EARTH, 8)));
-		//FundamentalList.addFundamentalsToStack(new ItemStack(Blocks.log2, 1, OreDictionary.WILDCARD_VALUE), new FundamentalData(Pair.of(Type.EARTH, 8)));
-		//Fundamentals.getCostsFromRecipes(4);
+		FundamentalList.addFundamentalsToStack(new ItemStack(Blocks.cobblestone, 1, OreDictionary.WILDCARD_VALUE), new FundamentalData(Pair.of(Type.STONE, 1)));
+		FundamentalList.addFundamentalsToStack(new ItemStack(Blocks.log, 1, OreDictionary.WILDCARD_VALUE), new FundamentalData(Pair.of(Type.EARTH, 8)));
+		FundamentalList.addFundamentalsToStack(new ItemStack(Blocks.log2, 1, OreDictionary.WILDCARD_VALUE), new FundamentalData(Pair.of(Type.EARTH, 8)));
+		FundamentalList.addFundamentalsToStack(new ItemStack(Items.iron_ingot, 1, OreDictionary.WILDCARD_VALUE), new FundamentalData(Pair.of(Type.STONE, 24), Pair.of(Type.FIRE, 2)));
 		
-		//Config.writeFundamentals(fundamentalFile);
+		//Process Fundamentals
+		Fundamentals.addRecipeProvider(VanillaCrafting.INSTANCE);
+		Fundamentals.addRecipeProvider(VanillaFurnace.INSTANCE);
+		
+		Fundamentals.processRecipes(4);
+		
+		Config.writeFundamentals(fundamentalFile);
 		
 	}
 	

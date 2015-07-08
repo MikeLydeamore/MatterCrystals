@@ -1,6 +1,7 @@
 package com.insane.mattercrystals.blocks;
 
 import com.insane.mattercrystals.render.CrystalStandRender;
+import com.insane.mattercrystals.tileentity.TileMatterMelter;
 
 import cpw.mods.fml.client.registry.RenderingRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
@@ -10,6 +11,7 @@ public class MCBlocks {
 	
 	public static Block crystalStand;
 	//public static Block crystal;
+	public static Block matterMelter;
 	
 	public static void registerBlocks()
 	{
@@ -19,6 +21,10 @@ public class MCBlocks {
 		
 		//crystal = new BlockCrystal();
 		//registerBlock(crystal);
+		
+		matterMelter = new BlockMatterMelter();
+		registerBlock(matterMelter);
+		GameRegistry.registerTileEntity(TileMatterMelter.class, "MatterMelter");
 	}
 	
 	
@@ -26,5 +32,4 @@ public class MCBlocks {
 	{
 		GameRegistry.registerBlock(block, block.getUnlocalizedName().substring(5));
 	}
-
 }

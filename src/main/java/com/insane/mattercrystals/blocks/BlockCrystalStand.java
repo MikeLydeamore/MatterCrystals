@@ -47,7 +47,7 @@ public class BlockCrystalStand extends MCBlockBase {
         this.blockIcon = par1IconRegister.registerIcon("mattercrystals:crystalstandstick");
     }
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@SideOnly(Side.CLIENT)
 	@Override
 	public void getSubBlocks(Item par1, CreativeTabs par2CreativeTabs, List par3List) {

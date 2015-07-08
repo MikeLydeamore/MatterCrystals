@@ -2,7 +2,6 @@ package com.insane.mattercrystals.fundamentals;
 
 import java.util.HashMap;
 
-import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 
 public class FundamentalList {
@@ -24,7 +23,7 @@ public class FundamentalList {
 		else
 		{
 			FundamentalData f = fundamentalList.get(bs);
-			if (fund.total() > f.total()) //Worse case
+			if (fund.total() > f.total() || !f.isCustom()) //Worse case
 			{
 				fundamentalList.put(bs, fund);
 			}
@@ -40,6 +39,15 @@ public class FundamentalList {
 		
 		BasicStack bs = new BasicStack(stack);
 		return fundamentalList.get(bs);
+	}
+	
+	public static boolean hasFundamentals(ItemStack stack)
+	{
+		if (stack == null)
+			return false;
+		
+		BasicStack bs = new BasicStack(stack);
+		return fundamentalList.get(bs) != null;
 	}
 
 }

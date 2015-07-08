@@ -1,8 +1,17 @@
 itemGroup.matterCrystals=Matter Crystals
 tile.crystalStand.name=Crystal Stand
+tile.blockMatterMelter.name=Matter Melter
+
 string.cost=Cost
 string.fundamentalStone=Stone
 string.fundamentalEarth=Earth
 string.fundamentalFire=Fire
 string.fundamentalWater=Water
 string.fundamentalAir=Air
+
+fluid.mattercrystals.earth=Earth Matter
+fluid.mattercrystals.stone=Stone Matter
+fluid.mattercrystals.fire=Fire Matter
+fluid.mattercrystals.water=Water Matter
+fluid.mattercrystals.air=Air Matter
+fluid.empty=Empty
