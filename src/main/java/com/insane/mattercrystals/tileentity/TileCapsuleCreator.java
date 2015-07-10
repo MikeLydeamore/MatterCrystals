@@ -7,6 +7,8 @@ import com.insane.mattercrystals.util.StackUtil;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 
 public class TileCapsuleCreator extends TileEntity implements ISidedInventory{
@@ -18,6 +20,34 @@ public class TileCapsuleCreator extends TileEntity implements ISidedInventory{
 	private int[] accessibleSlots = {itemInputSlot, capsuleInputSlot, outputSlot};
 	
 	public TileCapsuleCreator() {}
+	
+	@Override
+	public void writeToNBT(NBTTagCompound tag)
+	{
+		super.writeToNBT(tag);
+		
+		NBTTagList invList = new NBTTagList();
+		for (ItemStack s : inventory)
+		{
+			NBTTagCompound stackTag = new NBTTagCompound();
+			s.writeToNBT(stackTag);
+			invList.appendTag(stackTag);
+		}
+		tag.setTag("inventory", invList);
+			
+	}
+	
+	@Override
+	public void readFromNBT(NBTTagCompound tag)
+	{
+		super.readFromNBT(tag);
+		
+		NBTTagList invList = (NBTTagList) tag.getTag("inventory");
+		for (int i = 0 ; i < inventory.length ; i++)
+		{
+			inventory[i] = ItemStack.loadItemStackFromNBT(invList.getCompoundTagAt(i));
+		}
+	}
 
 	@Override
 	public int getSizeInventory() 
