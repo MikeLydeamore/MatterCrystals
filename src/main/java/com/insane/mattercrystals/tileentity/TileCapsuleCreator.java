@@ -1,8 +1,11 @@
 package com.insane.mattercrystals.tileentity;
 
+import lombok.Getter;
+import lombok.Setter;
 import cofh.api.energy.EnergyStorage;
 import cofh.api.energy.IEnergyHandler;
 
+import com.insane.mattercrystals.config.Config;
 import com.insane.mattercrystals.fundamentals.FundamentalList;
 import com.insane.mattercrystals.items.ItemCapsule;
 import com.insane.mattercrystals.util.StackUtil;
@@ -24,8 +27,14 @@ public class TileCapsuleCreator extends TileEntity implements ISidedInventory, I
 	private int[] accessibleSlots = {itemInputSlot, capsuleInputSlot, outputSlot};
 	
 	protected EnergyStorage storage = new EnergyStorage(100000);
+	@Getter @Setter
+	private byte progress;
+	private int RFCost;
 	
-	public TileCapsuleCreator() {}
+	public TileCapsuleCreator() 
+	{
+		RFCost = Config.capsuleCreatorRFCostPerTick;
+	}
 	
 	@Override
 	public void writeToNBT(NBTTagCompound tag)
@@ -36,11 +45,16 @@ public class TileCapsuleCreator extends TileEntity implements ISidedInventory, I
 		for (ItemStack s : inventory)
 		{
 			NBTTagCompound stackTag = new NBTTagCompound();
-			s.writeToNBT(stackTag);
+			if (s != null)
+			{
+				s.writeToNBT(stackTag);
+			}
 			invList.appendTag(stackTag);
 		}
 		tag.setTag("inventory", invList);
 		
+		tag.setByte("progress", progress);
+		tag.setInteger("RFCost", RFCost);
 		storage.writeToNBT(tag);
 			
 	}
@@ -56,9 +70,16 @@ public class TileCapsuleCreator extends TileEntity implements ISidedInventory, I
 			inventory[i] = ItemStack.loadItemStackFromNBT(invList.getCompoundTagAt(i));
 		}
 		
+		progress = tag.getByte("inventory");
+		tag.setInteger("RFCost", RFCost);
 		storage.readFromNBT(tag);
 	}
 
+	public int getRFCost()
+	{
+		return RFCost;
+	}
+	
 	@Override
 	public int getSizeInventory() 
 	{
@@ -77,7 +98,7 @@ public class TileCapsuleCreator extends TileEntity implements ISidedInventory, I
 		if (inventory[slot] != null)
 		{
 			ItemStack retStack = inventory[slot].copy();
-			int editAmount = Math.max(retStack.stackSize-amount, 0);
+			int editAmount = Math.min(retStack.stackSize, amount);
 			retStack.stackSize = editAmount;
 			inventory[slot].stackSize -= editAmount;
 			if (inventory[slot].stackSize == 0)

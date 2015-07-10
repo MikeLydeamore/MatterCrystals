@@ -25,12 +25,16 @@ public class Config {
 	//Categories
 	public static String categoryMelter = "MatterMelter";
 	public static String categoryAssembler = "AtomicAssembler";
+	public static String categoryCapsuleCreator = "CapsuleCreator";
 	
 	//Normal Config Values
 	public static boolean melterEnable = true;
 	public static boolean melterAllowNormalItemsToBeMelted = true;
 	public static int melterRFCostPerTick = 400;
 	public static int melterTankSize = 16000;
+	
+	public static boolean capsuleCreatorEnable = true;
+	public static int capsuleCreatorRFCostPerTick = 400;
 	
 	public static boolean assemblerEnable = true;
 	public static int assemblerRFCostPerTick = 400;
@@ -50,6 +54,10 @@ public class Config {
 		melterAllowNormalItemsToBeMelted = cfg.get(categoryMelter, "allowNormalItemsToBeMelted", true).getBoolean();
 		melterRFCostPerTick = cfg.get(categoryMelter, "MelterRFCostPerTick", 400, "Set to 0 to disable RF cost entirely").getInt();
 		melterTankSize = cfg.get(categoryMelter, "MelterTankSize", 16000, "Size of the internal tanks in the Matter Melter").getInt();
+		
+		//Capsule Creator
+		capsuleCreatorEnable = cfg.get(categoryCapsuleCreator, "enableCapsuleCreator", true).getBoolean();
+		capsuleCreatorRFCostPerTick = cfg.get(categoryCapsuleCreator, "CapsuleCreatorRFCostPerTick", 400, "Set to 0 to disable RF cost entirely").getInt();
 		
 		//Assembler
 		assemblerEnable = cfg.get(categoryAssembler, "enableAssembler", true).getBoolean();
