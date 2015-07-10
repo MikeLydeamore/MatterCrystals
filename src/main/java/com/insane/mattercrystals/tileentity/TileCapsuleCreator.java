@@ -1,5 +1,8 @@
 package com.insane.mattercrystals.tileentity;
 
+import cofh.api.energy.EnergyStorage;
+import cofh.api.energy.IEnergyHandler;
+
 import com.insane.mattercrystals.fundamentals.FundamentalList;
 import com.insane.mattercrystals.items.ItemCapsule;
 import com.insane.mattercrystals.util.StackUtil;
@@ -10,14 +13,17 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraftforge.common.util.ForgeDirection;
 
-public class TileCapsuleCreator extends TileEntity implements ISidedInventory{
+public class TileCapsuleCreator extends TileEntity implements ISidedInventory, IEnergyHandler {
 	
 	private ItemStack[] inventory = new ItemStack[3];
 	private int itemInputSlot = 0;
 	private int capsuleInputSlot = 1;
 	private int outputSlot = 2;
 	private int[] accessibleSlots = {itemInputSlot, capsuleInputSlot, outputSlot};
+	
+	protected EnergyStorage storage = new EnergyStorage(100000);
 	
 	public TileCapsuleCreator() {}
 	
@@ -34,6 +40,8 @@ public class TileCapsuleCreator extends TileEntity implements ISidedInventory{
 			invList.appendTag(stackTag);
 		}
 		tag.setTag("inventory", invList);
+		
+		storage.writeToNBT(tag);
 			
 	}
 	
@@ -47,6 +55,8 @@ public class TileCapsuleCreator extends TileEntity implements ISidedInventory{
 		{
 			inventory[i] = ItemStack.loadItemStackFromNBT(invList.getCompoundTagAt(i));
 		}
+		
+		storage.readFromNBT(tag);
 	}
 
 	@Override
@@ -162,6 +172,41 @@ public class TileCapsuleCreator extends TileEntity implements ISidedInventory{
 			return true;
 		
 		return false;
+	}
+
+	@Override
+	public boolean canConnectEnergy(ForgeDirection from) 
+	{
+		return true;
+	}
+
+	@Override
+	public int receiveEnergy(ForgeDirection from, int maxReceive, boolean simulate) 
+	{
+		return storage.receiveEnergy(maxReceive, simulate);
+	}
+
+	@Override
+	public int extractEnergy(ForgeDirection from, int maxExtract, boolean simulate) 
+	{
+		return storage.extractEnergy(maxExtract, simulate);
+	}
+
+	@Override
+	public int getEnergyStored(ForgeDirection from) 
+	{
+		return storage.getEnergyStored();
+	}
+
+	@Override
+	public int getMaxEnergyStored(ForgeDirection from) 
+	{
+		return storage.getMaxEnergyStored();
+	}
+	
+	public void setEnergyStored(int energy)
+	{
+		storage.setEnergyStored(energy);
 	}
 
 }

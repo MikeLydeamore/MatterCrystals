@@ -6,11 +6,11 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 
-public class SlotMatterMelter extends Slot {
+public class SlotRequiresFundmentals extends Slot {
 	
 	private int id;
 	
-	public SlotMatterMelter(IInventory inventory, int index, int x, int y)
+	public SlotRequiresFundmentals(IInventory inventory, int index, int x, int y)
 	{
 		super(inventory, index, x, y);
 		

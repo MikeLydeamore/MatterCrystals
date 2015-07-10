@@ -23,7 +23,7 @@ public class ContainerMatterMelter extends Container {
 	{
 		te = entity;
 
-		this.addSlotToContainer(new SlotMatterMelter(te, 0, 44, 51));
+		this.addSlotToContainer(new SlotRequiresFundmentals(te, 0, 44, 51));
 
 		int i;
 
