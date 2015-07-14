@@ -25,7 +25,7 @@ public class GUICapsuleCreator extends GuiBase {
 
 		xSize = 175;
 		ySize = 175;
-		this.texture = new ResourceLocation(MatterCrystals.MODID.toLowerCase(), "textures/gui/guimattermelter.png");
+		this.texture = new ResourceLocation(MatterCrystals.MODID.toLowerCase(), "textures/gui/guicapsulecreator.png");
 
 	}
 
@@ -49,7 +49,7 @@ public class GUICapsuleCreator extends GuiBase {
 
 		//Progress bar
 		int width = (int) ((float) te.getProgress() / 100 * 34);
-		this.drawTexturedModalRect(k+61, l+50, 176, 0, width, 17);
+		this.drawTexturedModalRect(k+70, l+50, 176, 0, width, 17);
 	}
 
 	@Override

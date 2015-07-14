@@ -1,5 +1,6 @@
 package com.insane.mattercrystals.gui.container;
 
+import com.insane.mattercrystals.fundamentals.FundamentalList;
 import com.insane.mattercrystals.items.MCItems;
 import com.insane.mattercrystals.tileentity.TileCapsuleCreator;
 
@@ -22,8 +23,9 @@ public class ContainerCapsuleCreator extends Container {
 	{
 		te = entity;
 		
-		this.addSlotToContainer(new SlotRequiresFundmentals(te, 0, 44, 40));
-		this.addSlotToContainer(new SlotSpecificItem(te, 1, 44, 60, new ItemStack(MCItems.itemCapsule)));
+		this.addSlotToContainer(new SlotRequiresFundmentals(te, 0, 46, 37));
+		this.addSlotToContainer(new SlotSpecificItem(te, 1, 46, 61, new ItemStack(MCItems.itemCapsule)));
+		this.addSlotToContainer(new SlotClosed(te, 2, 113, 50));
 
 		int i;
 
@@ -48,7 +50,48 @@ public class ContainerCapsuleCreator extends Container {
 	@Override
 	public ItemStack transferStackInSlot(EntityPlayer player, int slotNum)
 	{
-		return null;
+		ItemStack stack = null;
+		Slot slot = this.getSlot(slotNum);
+
+		if (slot != null && slot.getHasStack())
+		{
+			ItemStack stackInSlot = slot.getStack();
+			stack = stackInSlot.copy();
+			if (slotNum >= 3 && slotNum <= 38) //In the player
+			{
+					if (this.te.canInsertItem(0, stackInSlot, 0))
+					{
+						if (!this.mergeItemStack(stackInSlot, 0, 1, false))
+							return null;
+					}
+					
+					if (this.te.canInsertItem(1, stackInSlot, 0))
+					{
+						if (!this.mergeItemStack(stackInSlot, 1, 2, false))
+							return null;
+					}
+				
+			}
+
+			else if (slotNum <= 2)
+			{
+				if (!this.mergeItemStack(stackInSlot, 3, 38, false))
+					return null;
+			}
+
+			if (stackInSlot.stackSize == 0) {
+				slot.putStack(null);
+			} else {
+				slot.onSlotChanged();
+			}
+
+			if (stackInSlot.stackSize == stack.stackSize) {
+				return null;
+			}
+			slot.onPickupFromSlot(player, stackInSlot);
+		}
+
+		return stack;
 	}
 	
 	@Override
@@ -62,8 +105,13 @@ public class ContainerCapsuleCreator extends Container {
 			{
 				icrafting.sendProgressBarUpdate(this, 0, te.getEnergyStored(null));
 			}
+			if (this.lastProgress != te.getProgress())
+			{
+				icrafting.sendProgressBarUpdate(this, 1, te.getProgress());
+			}
 		}
 		this.lastEnergy = te.getEnergyStored(null);
+		this.lastProgress = te.getProgress();
 	}
 	
 	@SideOnly(Side.CLIENT)
@@ -72,6 +120,8 @@ public class ContainerCapsuleCreator extends Container {
 	{
 		if (par1 == 0)
 			te.setEnergyStored(par2);
+		else if (par1 == 1)
+			te.setProgress((byte) par2); 
 	}
 	
 

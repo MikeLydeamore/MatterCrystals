@@ -6,8 +6,14 @@ import cofh.api.energy.EnergyStorage;
 import cofh.api.energy.IEnergyHandler;
 
 import com.insane.mattercrystals.config.Config;
+import com.insane.mattercrystals.fundamentals.Fundamental.Type;
+import com.insane.mattercrystals.fundamentals.FundamentalData;
 import com.insane.mattercrystals.fundamentals.FundamentalList;
 import com.insane.mattercrystals.items.ItemCapsule;
+import com.insane.mattercrystals.items.MCItems;
+import com.insane.mattercrystals.network.MessageCapsuleCreatorInputUpdate;
+import com.insane.mattercrystals.network.MessageMatterMelterInputUpdate;
+import com.insane.mattercrystals.network.PacketHandler;
 import com.insane.mattercrystals.util.StackUtil;
 
 import net.minecraft.entity.player.EntityPlayer;
@@ -15,32 +21,88 @@ import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.network.NetworkManager;
+import net.minecraft.network.Packet;
+import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
 
 public class TileCapsuleCreator extends TileEntity implements ISidedInventory, IEnergyHandler {
-	
+
 	private ItemStack[] inventory = new ItemStack[3];
 	private int itemInputSlot = 0;
 	private int capsuleInputSlot = 1;
 	private int outputSlot = 2;
 	private int[] accessibleSlots = {itemInputSlot, capsuleInputSlot, outputSlot};
-	
+
 	protected EnergyStorage storage = new EnergyStorage(100000);
 	@Getter @Setter
 	private byte progress;
 	private int RFCost;
-	
+
+	private int ticksSinceLast = 0;
+
 	public TileCapsuleCreator() 
 	{
 		RFCost = Config.capsuleCreatorRFCostPerTick;
 	}
-	
+
+	@Override
+	public void updateEntity()
+	{
+		if (!worldObj.isRemote)
+		{
+			if (inventory[itemInputSlot] != null && inventory[capsuleInputSlot] != null
+					&& FundamentalList.hasFundamentals(inventory[itemInputSlot]) && inventory[capsuleInputSlot].getItem() == MCItems.itemCapsule
+					&& inventory[outputSlot] == null)
+			{
+				if (storage.extractEnergy(RFCost, true) == RFCost)
+				{
+					storage.extractEnergy(RFCost, false); //Extract Energy
+					ticksSinceLast++;
+					if (ticksSinceLast >= 20)
+					{
+						progress++;
+						ticksSinceLast = 0;
+						
+						if (progress >= 100)
+						{
+							//Create the capsule
+							ItemStack capsuleOut = new ItemStack(MCItems.itemCapsule);
+							NBTTagCompound tag = new NBTTagCompound();
+							FundamentalData fd = FundamentalList.getFundamentalsFromStack(inventory[itemInputSlot]);
+							for (Type t : fd.getKeys())
+							{
+								tag.setInteger(t.name(), fd.getValue(t));
+							}
+							
+							capsuleOut.stackTagCompound = tag;
+							
+							if (inventory[outputSlot] == null)
+							{
+								inventory[outputSlot] = capsuleOut;
+								sendInputUpdatePacket(outputSlot);
+								inventory[capsuleInputSlot].stackSize--;
+								if (inventory[capsuleInputSlot].stackSize <= 0)
+									inventory[capsuleInputSlot] = null;
+								sendInputUpdatePacket(capsuleInputSlot);
+								progress = 0;
+							}
+							
+								
+							
+						}
+					}
+				}
+			}
+		}
+	}
+
 	@Override
 	public void writeToNBT(NBTTagCompound tag)
 	{
 		super.writeToNBT(tag);
-		
+
 		NBTTagList invList = new NBTTagList();
 		for (ItemStack s : inventory)
 		{
@@ -52,34 +114,58 @@ public class TileCapsuleCreator extends TileEntity implements ISidedInventory, I
 			invList.appendTag(stackTag);
 		}
 		tag.setTag("inventory", invList);
-		
+
+		tag.setInteger("ticksSinceLast", ticksSinceLast);
+
 		tag.setByte("progress", progress);
 		tag.setInteger("RFCost", RFCost);
 		storage.writeToNBT(tag);
-			
+
 	}
-	
+
 	@Override
 	public void readFromNBT(NBTTagCompound tag)
 	{
 		super.readFromNBT(tag);
-		
+
 		NBTTagList invList = (NBTTagList) tag.getTag("inventory");
 		for (int i = 0 ; i < inventory.length ; i++)
 		{
 			inventory[i] = ItemStack.loadItemStackFromNBT(invList.getCompoundTagAt(i));
 		}
-		
+
+		ticksSinceLast = tag.getInteger("ticksSinceLast");
+
 		progress = tag.getByte("inventory");
 		tag.setInteger("RFCost", RFCost);
 		storage.readFromNBT(tag);
+	}
+	
+	private void sendInputUpdatePacket(int slot)
+	{
+		PacketHandler.INSTANCE.sendToDimension(new MessageCapsuleCreatorInputUpdate(xCoord, yCoord, zCoord, slot, inventory[slot]), worldObj.provider.dimensionId);
+	}
+	
+	@Override
+	public Packet getDescriptionPacket() 
+	{
+		NBTTagCompound tagCompound = new NBTTagCompound();
+		writeToNBT(tagCompound);
+		return new S35PacketUpdateTileEntity(xCoord, yCoord, zCoord, this.blockMetadata, tagCompound);
+	}
+
+	@Override
+	public void onDataPacket(NetworkManager net, S35PacketUpdateTileEntity pkt)
+	{
+		NBTTagCompound tag = pkt.func_148857_g();
+		this.readFromNBT(tag);
 	}
 
 	public int getRFCost()
 	{
 		return RFCost;
 	}
-	
+
 	@Override
 	public int getSizeInventory() 
 	{
@@ -103,7 +189,7 @@ public class TileCapsuleCreator extends TileEntity implements ISidedInventory, I
 			inventory[slot].stackSize -= editAmount;
 			if (inventory[slot].stackSize == 0)
 				inventory[slot] = null;
-			
+
 			return retStack;
 		}
 		return null;
@@ -120,7 +206,7 @@ public class TileCapsuleCreator extends TileEntity implements ISidedInventory, I
 	{
 		if (slot < inventory.length)
 			inventory[slot] = stack;
-		
+
 	}
 
 	@Override
@@ -150,13 +236,13 @@ public class TileCapsuleCreator extends TileEntity implements ISidedInventory, I
 	@Override
 	public void openInventory() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void closeInventory() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -164,13 +250,13 @@ public class TileCapsuleCreator extends TileEntity implements ISidedInventory, I
 	{
 		if (slot == outputSlot)
 			return false;
-		
+
 		if (slot == itemInputSlot)
 			return FundamentalList.hasFundamentals(stack) && StackUtil.canStacksMerge(inventory[slot], stack);
-		
+
 		if (slot == capsuleInputSlot)
 			return stack.getItem() instanceof ItemCapsule && StackUtil.canStacksMerge(inventory[slot], stack);
-		
+
 		return false;
 	}
 
@@ -191,7 +277,7 @@ public class TileCapsuleCreator extends TileEntity implements ISidedInventory, I
 	{
 		if (slot == outputSlot && inventory[slot] != null)
 			return true;
-		
+
 		return false;
 	}
 
@@ -224,7 +310,7 @@ public class TileCapsuleCreator extends TileEntity implements ISidedInventory, I
 	{
 		return storage.getMaxEnergyStored();
 	}
-	
+
 	public void setEnergyStored(int energy)
 	{
 		storage.setEnergyStored(energy);

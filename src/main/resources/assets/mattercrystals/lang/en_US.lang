@@ -1,6 +1,9 @@
 itemGroup.matterCrystals=Matter Crystals
 tile.crystalStand.name=Crystal Stand
 tile.blockMatterMelter.name=Matter Melter
+tile.blockCapsuleCreator.name=Capsule Creator
+
+item.capsule.name=Matter Capsule
 
 string.cost=Cost
 string.fundamentalStone=Stone

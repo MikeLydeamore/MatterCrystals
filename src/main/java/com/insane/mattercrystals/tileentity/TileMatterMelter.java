@@ -76,7 +76,6 @@ public class TileMatterMelter extends TileEntity implements ISidedInventory, IFl
 				{
 					ticksSinceLast = 0;
 					progress++;
-					System.out.println(progress);
 					
 					if (isDone())
 					{

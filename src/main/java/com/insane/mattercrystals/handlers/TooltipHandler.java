@@ -3,6 +3,7 @@ package com.insane.mattercrystals.handlers;
 import com.insane.mattercrystals.fundamentals.Fundamental.Type;
 import com.insane.mattercrystals.fundamentals.FundamentalData;
 import com.insane.mattercrystals.fundamentals.FundamentalList;
+import com.insane.mattercrystals.items.MCItems;
 
 import net.minecraft.util.StatCollector;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
@@ -21,6 +22,17 @@ public class TooltipHandler {
 			{
 				if (f.getValue(t) != 0)
 					event.toolTip.add("  "+t.getLocalizedName()+": "+f.getValue(t));
+			}
+		}
+		
+		if (event.itemStack != null && event.itemStack.getItem() == MCItems.itemCapsule
+				&& event.itemStack.stackTagCompound != null)
+		{
+			for (Type t : Type.values())
+			{
+				int num = event.itemStack.stackTagCompound.getInteger(t.name());
+				if (num > 0)
+					event.toolTip.add("  "+t.getLocalizedName()+": "+num);
 			}
 		}
 	}
