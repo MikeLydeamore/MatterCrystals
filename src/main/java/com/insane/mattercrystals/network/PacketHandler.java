@@ -15,6 +15,7 @@ public class PacketHandler {
 	{
 		INSTANCE.registerMessage(MessageMatterMelterInputUpdate.Handler.class, MessageMatterMelterInputUpdate.class, id++, Side.CLIENT);
 		INSTANCE.registerMessage(MessageMatterMelterFluidUpdate.Handler.class, MessageMatterMelterFluidUpdate.class, id++, Side.CLIENT);
+		INSTANCE.registerMessage(MessageMatterMelterProgressUpdate.Handler.class, MessageMatterMelterProgressUpdate.class, id++, Side.CLIENT);
 		
 		INSTANCE.registerMessage(MessageAtomicAssemblerItemUpdate.Handler.class, MessageAtomicAssemblerItemUpdate.class, id++, Side.CLIENT);
 	}

@@ -6,6 +6,7 @@ import java.util.HashMap;
 import cofh.api.energy.EnergyStorage;
 import cofh.api.energy.IEnergyHandler;
 
+import com.insane.mattercrystals.blocks.MCBlocks;
 import com.insane.mattercrystals.config.Config;
 import com.insane.mattercrystals.fluids.MCFluids;
 import com.insane.mattercrystals.fundamentals.Fundamental;
@@ -13,6 +14,7 @@ import com.insane.mattercrystals.fundamentals.FundamentalData;
 import com.insane.mattercrystals.fundamentals.FundamentalList;
 import com.insane.mattercrystals.network.MessageMatterMelterFluidUpdate;
 import com.insane.mattercrystals.network.MessageMatterMelterInputUpdate;
+import com.insane.mattercrystals.network.MessageMatterMelterProgressUpdate;
 import com.insane.mattercrystals.network.PacketHandler;
 import com.insane.mattercrystals.util.StackUtil;
 
@@ -59,6 +61,8 @@ public class TileMatterMelter extends TileEntity implements ISidedInventory, IFl
 		RFCost = Config.melterRFCostPerTick;
 		
 		progress = 0;
+		
+		
 	}
 	
 	@Override
@@ -76,10 +80,17 @@ public class TileMatterMelter extends TileEntity implements ISidedInventory, IFl
 				{
 					ticksSinceLast = 0;
 					progress++;
+					if (progress == 1)
+					{
+						PacketHandler.INSTANCE.sendToDimension(new MessageMatterMelterProgressUpdate(xCoord, yCoord, zCoord, progress), worldObj.provider.dimensionId);
+						worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+					}
+						
 					
 					if (isDone())
 					{
 						progress = 0;
+						PacketHandler.INSTANCE.sendToDimension(new MessageMatterMelterProgressUpdate(xCoord, yCoord, zCoord, progress), worldObj.provider.dimensionId);
 						
 						//Melt the item
 						FundamentalData fs = FundamentalList.getFundamentalsFromStack(this.inputSlot);
@@ -122,6 +133,9 @@ public class TileMatterMelter extends TileEntity implements ISidedInventory, IFl
 			{
 				ticksSinceLast=0; //Lose progress if item removed.
 				progress = 0;
+				this.markDirty();
+				PacketHandler.INSTANCE.sendToDimension(new MessageMatterMelterProgressUpdate(xCoord, yCoord, zCoord, progress), worldObj.provider.dimensionId);
+				worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
 			}
 		}
 	}

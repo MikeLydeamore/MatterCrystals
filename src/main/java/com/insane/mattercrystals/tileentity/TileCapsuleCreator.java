@@ -53,10 +53,9 @@ public class TileCapsuleCreator extends TileEntity implements ISidedInventory, I
 		if (!worldObj.isRemote)
 		{
 			if (inventory[itemInputSlot] != null && inventory[capsuleInputSlot] != null
-					&& FundamentalList.hasFundamentals(inventory[itemInputSlot]) && inventory[capsuleInputSlot].getItem() == MCItems.itemCapsule
-					&& inventory[outputSlot] == null)
+					&& FundamentalList.hasFundamentals(inventory[itemInputSlot]) && inventory[capsuleInputSlot].getItem() == MCItems.itemCapsule)
 			{
-				if (storage.extractEnergy(RFCost, true) == RFCost)
+				if (storage.extractEnergy(RFCost, true) == RFCost && progress < 100)
 				{
 					storage.extractEnergy(RFCost, false); //Extract Energy
 					ticksSinceLast++;
@@ -64,34 +63,30 @@ public class TileCapsuleCreator extends TileEntity implements ISidedInventory, I
 					{
 						progress++;
 						ticksSinceLast = 0;
-						
-						if (progress >= 100)
-						{
-							//Create the capsule
-							ItemStack capsuleOut = new ItemStack(MCItems.itemCapsule);
-							NBTTagCompound tag = new NBTTagCompound();
-							FundamentalData fd = FundamentalList.getFundamentalsFromStack(inventory[itemInputSlot]);
-							for (Type t : fd.getKeys())
-							{
-								tag.setInteger(t.name(), fd.getValue(t));
-							}
-							
-							capsuleOut.stackTagCompound = tag;
-							
-							if (inventory[outputSlot] == null)
-							{
-								inventory[outputSlot] = capsuleOut;
-								sendInputUpdatePacket(outputSlot);
-								inventory[capsuleInputSlot].stackSize--;
-								if (inventory[capsuleInputSlot].stackSize <= 0)
-									inventory[capsuleInputSlot] = null;
-								sendInputUpdatePacket(capsuleInputSlot);
-								progress = 0;
-							}
-							
-								
-							
-						}
+					}
+				}
+				if (progress >= 100)
+				{
+					//Create the capsule
+					ItemStack capsuleOut = new ItemStack(MCItems.itemCapsule);
+					NBTTagCompound tag = new NBTTagCompound();
+					FundamentalData fd = FundamentalList.getFundamentalsFromStack(inventory[itemInputSlot]);
+					for (Type t : fd.getKeys())
+					{
+						tag.setInteger(t.name(), fd.getValue(t));
+					}
+
+					capsuleOut.stackTagCompound = tag;
+
+					if (inventory[outputSlot] == null)
+					{
+						inventory[outputSlot] = capsuleOut;
+						sendInputUpdatePacket(outputSlot);
+						inventory[capsuleInputSlot].stackSize--;
+						if (inventory[capsuleInputSlot].stackSize <= 0)
+							inventory[capsuleInputSlot] = null;
+						sendInputUpdatePacket(capsuleInputSlot);
+						progress = 0;
 					}
 				}
 			}
@@ -140,12 +135,12 @@ public class TileCapsuleCreator extends TileEntity implements ISidedInventory, I
 		tag.setInteger("RFCost", RFCost);
 		storage.readFromNBT(tag);
 	}
-	
+
 	private void sendInputUpdatePacket(int slot)
 	{
 		PacketHandler.INSTANCE.sendToDimension(new MessageCapsuleCreatorInputUpdate(xCoord, yCoord, zCoord, slot, inventory[slot]), worldObj.provider.dimensionId);
 	}
-	
+
 	@Override
 	public Packet getDescriptionPacket() 
 	{
