@@ -55,7 +55,6 @@ public class BlockMatterMelter extends MCBlockBase implements ITileEntityProvide
 	{
 		int metadata = world.getBlockMetadata(x, y, z);
 		TileMatterMelter te = (TileMatterMelter) world.getTileEntity(x, y, z);
-		System.out.println(te.getProgress());
 		if (side == 0 || side == 1)
 			return icons[3];
 		

@@ -1,14 +1,14 @@
 [
 {
-  "modid": "examplemod",
-  "name": "Example Mod",
-  "description": "Example placeholder mod.",
+  "modid": "mattercrystals",
+  "name": "Matter Crystals",
+  "description": "Melt down crystals, make matter",
   "version": "${version}",
   "mcversion": "${mcversion}",
   "url": "",
   "updateUrl": "",
-  "authorList": ["ExampleDude"],
-  "credits": "The Forge and FML guys, for making this example",
+  "authorList": ["insaneau"],
+  "credits": "",
   "logoFile": "",
   "screenshots": [],
   "dependencies": []

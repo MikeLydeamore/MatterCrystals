@@ -4,6 +4,7 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.World;
 
 import com.insane.mattercrystals.tileentity.TileMatterMelter;
 
@@ -51,9 +52,14 @@ public class MessageMatterMelterProgressUpdate implements IMessage {
 		@Override
 		public IMessage onMessage(MessageMatterMelterProgressUpdate message, MessageContext ctx)
 		{
+			World world = Minecraft.getMinecraft().theWorld;
 			TileEntity te = Minecraft.getMinecraft().theWorld.getTileEntity(message.x, message.y, message.z);
 			if (te != null && te instanceof TileMatterMelter)
+			{
 				((TileMatterMelter) te).setProgress(message.progress);
+				world.markBlockForUpdate(message.x, message.y, message.z);
+				
+			}
 			
 			return null;
 		}

@@ -24,17 +24,6 @@ public class TooltipHandler {
 					event.toolTip.add("  "+t.getLocalizedName()+": "+f.getValue(t));
 			}
 		}
-		
-		if (event.itemStack != null && event.itemStack.getItem() == MCItems.itemCapsule
-				&& event.itemStack.stackTagCompound != null)
-		{
-			for (Type t : Type.values())
-			{
-				int num = event.itemStack.stackTagCompound.getInteger(t.name());
-				if (num > 0)
-					event.toolTip.add("  "+t.getLocalizedName()+": "+num);
-			}
-		}
 	}
 
 }

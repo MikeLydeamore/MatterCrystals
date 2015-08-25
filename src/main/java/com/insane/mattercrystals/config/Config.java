@@ -26,6 +26,7 @@ public class Config {
 	public static String categoryMelter = "MatterMelter";
 	public static String categoryAssembler = "AtomicAssembler";
 	public static String categoryCapsuleCreator = "CapsuleCreator";
+	public static String categoryGeneral = "General";
 	
 	//Normal Config Values
 	public static boolean melterEnable = true;
@@ -38,6 +39,8 @@ public class Config {
 	
 	public static boolean assemblerEnable = true;
 	public static int assemblerRFCostPerTick = 400;
+	
+	public static int capsuleRuns = 6;
 	
 	public Config()
 	{
@@ -63,6 +66,8 @@ public class Config {
 		assemblerEnable = cfg.get(categoryAssembler, "enableAssembler", true).getBoolean();
 		assemblerRFCostPerTick = cfg.get(categoryAssembler, "AssemblerRFCostPerTick", 400, "Set to 0 to disable RF cost entirely").getInt();
 		
+		//General
+		capsuleRuns = cfg.get(categoryGeneral,"runsPerCapsule", 6, "Number of 'runs' a single capsule will get before disintegrating").getInt();
 	}
 
 	public static void writeFundamentals(File f)

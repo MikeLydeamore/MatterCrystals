@@ -1,8 +1,10 @@
 package com.insane.mattercrystals.tileentity;
 
 import com.insane.mattercrystals.config.Config;
+import com.insane.mattercrystals.fluids.MCFluids;
 import com.insane.mattercrystals.fundamentals.FundamentalData;
 import com.insane.mattercrystals.fundamentals.FundamentalList;
+import com.insane.mattercrystals.fundamentals.Fundamental.Type;
 import com.insane.mattercrystals.network.MessageAtomicAssemblerItemUpdate;
 import com.insane.mattercrystals.network.MessageMatterMelterInputUpdate;
 import com.insane.mattercrystals.network.PacketHandler;
@@ -35,6 +37,9 @@ public class TileAtomicAssembler extends TileEntity implements ISidedInventory, 
 	@Getter
 	private boolean inProgress;
 	
+	@Getter
+	private boolean isComplete;
+	
 	private byte progress;
 	
 	private int ticksSinceLast = 0;
@@ -49,7 +54,6 @@ public class TileAtomicAssembler extends TileEntity implements ISidedInventory, 
 	@Override
 	public void updateEntity()
 	{
-		ticksSinceLast++;
 		if (copyStack != null)
 		{
 			if (!this.isInProgress())
@@ -58,7 +62,7 @@ public class TileAtomicAssembler extends TileEntity implements ISidedInventory, 
 				FundamentalData data = FundamentalList.getFundamentalsFromStack(copyStack);
 				tanks = new FluidTank[data.getNumFundamentals()];
 			}
-			else if (ticksSinceLast >= 20)
+			else if (this.isComplete())
 			{
 				
 			}
@@ -69,6 +73,27 @@ public class TileAtomicAssembler extends TileEntity implements ISidedInventory, 
 			tanks = null;
 			this.inProgress = false;
 		}
+	}
+	
+	public boolean isComplete()
+	{
+		if (copyStack == null)
+			return false;
+		
+		else
+		{
+			NBTTagCompound fundamentalTag = copyStack.stackTagCompound;
+			
+			for (Type t : Type.values())
+			{
+				int num = fundamentalTag.getInteger(t.name());
+				if (num > 0)
+					return false;
+			
+			}
+		}
+		
+		return true;
 	}
 	
 	@Override
@@ -307,21 +332,22 @@ public class TileAtomicAssembler extends TileEntity implements ISidedInventory, 
 	@Override
 	public int fill(ForgeDirection from, FluidStack resource, boolean doFill) 
 	{
-		if (!this.isInProgress())
+		if (!this.isInProgress() || tanks == null || copyStack == null)
 			return 0;
+		
 		return 0;
 	}
 
 	@Override
 	public FluidStack drain(ForgeDirection from, FluidStack resource,
-			boolean doDrain) {
-		// TODO Auto-generated method stub
+			boolean doDrain) 
+	{
 		return null;
 	}
 
 	@Override
-	public FluidStack drain(ForgeDirection from, int maxDrain, boolean doDrain) {
-		// TODO Auto-generated method stub
+	public FluidStack drain(ForgeDirection from, int maxDrain, boolean doDrain)
+	{
 		return null;
 	}
 
@@ -332,15 +358,24 @@ public class TileAtomicAssembler extends TileEntity implements ISidedInventory, 
 	}
 
 	@Override
-	public boolean canDrain(ForgeDirection from, Fluid fluid) {
-		// TODO Auto-generated method stub
+	public boolean canDrain(ForgeDirection from, Fluid fluid) 
+	{
 		return false;
 	}
 
 	@Override
-	public FluidTankInfo[] getTankInfo(ForgeDirection from) {
-		// TODO Auto-generated method stub
-		return null;
+	public FluidTankInfo[] getTankInfo(ForgeDirection from)
+	{
+		if (tanks == null)
+			return null;
+		FluidTankInfo[] ret = new FluidTankInfo[tanks.length];
+		int i = 0;
+		for (FluidTank tank : tanks)
+		{
+			ret[i] = new FluidTankInfo(tank);
+			i++;
+		}
+		return ret;
 	}
 
 }

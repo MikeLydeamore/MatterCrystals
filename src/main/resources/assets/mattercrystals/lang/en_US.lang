@@ -11,6 +11,7 @@ string.fundamentalEarth=Earth
 string.fundamentalFire=Fire
 string.fundamentalWater=Water
 string.fundamentalAir=Air
+string.pressshift=Press -SHIFT- to see Fundamentals
 
 fluid.mattercrystals.earth=Earth Matter
 fluid.mattercrystals.stone=Stone Matter
@@ -18,3 +19,5 @@ fluid.mattercrystals.fire=Fire Matter
 fluid.mattercrystals.water=Water Matter
 fluid.mattercrystals.air=Air Matter
 fluid.empty=Empty
+
+capsule.runs.remaining=Runs

@@ -75,17 +75,29 @@ public class TileCapsuleCreator extends TileEntity implements ISidedInventory, I
 					{
 						tag.setInteger(t.name(), fd.getValue(t));
 					}
+					
+					
+					NBTTagCompound itemTag = new NBTTagCompound();
+					inventory[itemInputSlot].writeToNBT(itemTag);
+					
+					tag.setTag("storedItem", itemTag);
+					
+					tag.setInteger("runs", Config.capsuleRuns);
 
 					capsuleOut.stackTagCompound = tag;
 
-					if (inventory[outputSlot] == null)
+					if (inventory[outputSlot] == null || StackUtil.canStacksMerge(capsuleOut,inventory[outputSlot]))
 					{
-						inventory[outputSlot] = capsuleOut;
+						if (inventory[outputSlot] == null)
+							inventory[outputSlot] = capsuleOut;
+						else
+							inventory[outputSlot].stackSize++;
 						sendInputUpdatePacket(outputSlot);
 						inventory[capsuleInputSlot].stackSize--;
 						if (inventory[capsuleInputSlot].stackSize <= 0)
 							inventory[capsuleInputSlot] = null;
 						sendInputUpdatePacket(capsuleInputSlot);
+						this.markDirty();
 						progress = 0;
 					}
 				}

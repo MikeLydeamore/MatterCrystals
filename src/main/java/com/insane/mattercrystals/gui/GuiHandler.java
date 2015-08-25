@@ -18,12 +18,11 @@ public class GuiHandler implements IGuiHandler {
 	public Object getServerGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
 		if (ID == IDMatterMelter)
 		{
-			
 			TileMatterMelter te = (TileMatterMelter) world.getTileEntity(x, y, z);
 			
 			return new ContainerMatterMelter(player.inventory, te);
 		}
-		System.out.println(ID);
+
 		if (ID == IDCapsuleCreator)
 		{
 			TileCapsuleCreator te = (TileCapsuleCreator) world.getTileEntity(x, y, z);

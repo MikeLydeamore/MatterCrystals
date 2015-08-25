@@ -17,18 +17,10 @@ public class StackUtil {
 
 	public static boolean canStacksMerge(ItemStack stack1, ItemStack stack2)
 	{
-		if (stack1 == null)
-			return true;
-
-		if (stack2 == null)
-			return true;
-
-		if (!areStacksEqualWithoutStacksize(stack1, stack2))
+		if (stack1 == null || stack2 == null)
 			return false;
-		else
-		{
-			return stack1.stackSize+stack2.stackSize <= stack1.getMaxStackSize();
-		}
+		return stack1.isItemEqual(stack2) && ItemStack.areItemStackTagsEqual(stack1, stack2)
+				&& stack1.stackSize+stack2.stackSize <= stack1.getMaxStackSize();
 	}
 
 	public static boolean isItemCrystal(ItemStack stack)

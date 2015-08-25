@@ -135,7 +135,6 @@ public class TileMatterMelter extends TileEntity implements ISidedInventory, IFl
 				progress = 0;
 				this.markDirty();
 				PacketHandler.INSTANCE.sendToDimension(new MessageMatterMelterProgressUpdate(xCoord, yCoord, zCoord, progress), worldObj.provider.dimensionId);
-				worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
 			}
 		}
 	}
