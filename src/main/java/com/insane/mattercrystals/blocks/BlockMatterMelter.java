@@ -48,6 +48,25 @@ public class BlockMatterMelter extends MCBlockBase implements ITileEntityProvide
 		icons[2] = register.registerIcon("mattercrystals:matterMelterSide16");
 		icons[3] = register.registerIcon("mattercrystals:matterMelterTopBottom16");
 	}
+	
+	@Override
+	@SideOnly(Side.CLIENT)
+	public IIcon getIcon(int side, int metadata)
+	{
+		if (side == 0 || side == 1)
+			return icons[3];
+		
+		else if (metadata == 2 && side == 2) 
+			return icons[1];
+		else if (metadata == 3 && side == 5) 
+			return icons[1];
+		else if (metadata == 0 && side == 3) 
+			return icons[1];
+		else if (metadata == 1 && side == 4) 
+			return icons[1];
+		else
+			return icons[2];
+	}
 
 	@Override
 	@SideOnly(Side.CLIENT)

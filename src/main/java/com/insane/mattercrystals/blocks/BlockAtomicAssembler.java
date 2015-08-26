@@ -50,6 +50,25 @@ public class BlockAtomicAssembler extends MCBlockBase implements ITileEntityProv
 	
 	@Override
 	@SideOnly(Side.CLIENT)
+	public IIcon getIcon(int side, int metadata)
+	{
+		if (side == 0 || side == 1)
+			return icons[2];
+		
+		else if (metadata == 2 && side == 2) 
+			return icons[0];
+		else if (metadata == 3 && side == 5) 
+			return icons[0];
+		else if (metadata == 0 && side == 3) 
+			return icons[0];
+		else if (metadata == 1 && side == 4) 
+			return icons[0];
+		else
+			return icons[1];
+	}
+	
+	@Override
+	@SideOnly(Side.CLIENT)
 	public IIcon getIcon(IBlockAccess world, int x, int y, int z, int side)
 	{
 		int metadata = world.getBlockMetadata(x, y, z);
