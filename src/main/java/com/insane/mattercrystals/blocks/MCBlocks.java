@@ -1,6 +1,7 @@
 package com.insane.mattercrystals.blocks;
 
 import com.insane.mattercrystals.render.CrystalStandRender;
+import com.insane.mattercrystals.tileentity.TileAtomicAssembler;
 import com.insane.mattercrystals.tileentity.TileCapsuleCreator;
 import com.insane.mattercrystals.tileentity.TileMatterMelter;
 
@@ -14,6 +15,7 @@ public class MCBlocks {
 	//public static Block crystal;
 	public static Block matterMelter;
 	public static Block capsuleCreator;
+	public static Block atomicAssembler;
 	
 	public static void registerBlocks()
 	{
@@ -31,6 +33,10 @@ public class MCBlocks {
 		capsuleCreator = new BlockCapsuleCreator();
 		registerBlock(capsuleCreator);
 		GameRegistry.registerTileEntity(TileCapsuleCreator.class, "CapsuleCreator");
+		
+		atomicAssembler = new BlockAtomicAssembler();
+		registerBlock(atomicAssembler);
+		GameRegistry.registerTileEntity(TileAtomicAssembler.class, "AtomicAssembler");
 	}
 	
 	

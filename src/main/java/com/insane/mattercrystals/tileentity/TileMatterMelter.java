@@ -46,9 +46,6 @@ public class TileMatterMelter extends TileEntity implements ISidedInventory, IFl
 	
 	private int ticksSinceLast;
 	
-	@Getter
-	private final int fluidMultiplier = 100;
-	
 	@Getter @Setter
 	private byte progress; //0 = not started, 100 = finished.
 	
@@ -99,7 +96,7 @@ public class TileMatterMelter extends TileEntity implements ISidedInventory, IFl
 							int emptyIndex = -1;
 							if (fs.getValue(f) == 0)
 								continue;
-							FluidStack fluid = new FluidStack(MCFluids.fluids.get(f), fs.getValue(f)*fluidMultiplier);
+							FluidStack fluid = new FluidStack(MCFluids.fluidsEnumList.get(f), fs.getValue(f)*Config.fluidMultiplier);
 							for (int i = 0 ; i < tanks.length ; i++)
 							{
 								if (tanks[i].getFluid() == null)
@@ -151,10 +148,10 @@ public class TileMatterMelter extends TileEntity implements ISidedInventory, IFl
 		HashMap<Fundamental.Type, Boolean> allocated = new HashMap<Fundamental.Type, Boolean>();
 		for (Fundamental.Type f : fs.getKeys())
 		{
-			Fluid fluid = MCFluids.fluids.get(f);
+			Fluid fluid = MCFluids.fluidsEnumList.get(f);
 			if (fs.getValue(f) == 0)
 				continue;
-			FluidStack fluidStack = new FluidStack(fluid, fs.getValue(f)*fluidMultiplier);
+			FluidStack fluidStack = new FluidStack(fluid, fs.getValue(f)*Config.fluidMultiplier);
 			for (int i = 0 ; i < tanks.length ; i++)
 			{
 				if (!allocatedTanks.containsKey(i) && !allocated.containsKey(f) && spaceInTank(i, fluidStack))

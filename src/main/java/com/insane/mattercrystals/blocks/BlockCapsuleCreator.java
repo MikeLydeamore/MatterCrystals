@@ -3,8 +3,6 @@ package com.insane.mattercrystals.blocks;
 import com.insane.mattercrystals.MatterCrystals;
 import com.insane.mattercrystals.gui.GuiHandler;
 import com.insane.mattercrystals.tileentity.TileCapsuleCreator;
-import com.insane.mattercrystals.tileentity.TileMatterMelter;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;

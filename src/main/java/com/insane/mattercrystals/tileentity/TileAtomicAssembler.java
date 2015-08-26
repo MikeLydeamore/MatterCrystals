@@ -1,5 +1,7 @@
 package com.insane.mattercrystals.tileentity;
 
+import org.apache.commons.lang3.ArrayUtils;
+
 import com.insane.mattercrystals.config.Config;
 import com.insane.mattercrystals.fluids.MCFluids;
 import com.insane.mattercrystals.fundamentals.FundamentalData;
@@ -59,11 +61,10 @@ public class TileAtomicAssembler extends TileEntity implements ISidedInventory, 
 			if (!this.isInProgress())
 			{
 				this.inProgress = true;
-				FundamentalData data = FundamentalList.getFundamentalsFromStack(copyStack);
-				tanks = new FluidTank[data.getNumFundamentals()];
 			}
 			else if (this.isComplete())
 			{
+				
 				
 			}
 		}
@@ -96,6 +97,44 @@ public class TileAtomicAssembler extends TileEntity implements ISidedInventory, 
 		return true;
 	}
 	
+	public void processRun()
+	{
+		boolean added = false;
+		ItemStack potential = ItemStack.loadItemStackFromNBT(copyStack.stackTagCompound.getCompoundTag("storedItem"));
+		if (outputStack == null)
+		{
+			outputStack = potential;
+			added = true;
+		}
+		else if (StackUtil.canStacksMerge(outputStack, potential))
+		{
+			outputStack.stackSize++;
+			added = true;
+		}
+		if (added)
+		{
+			PacketHandler.INSTANCE.sendToDimension(new MessageAtomicAssemblerItemUpdate(xCoord, yCoord, zCoord, outputStack, 1),  worldObj.provider.dimensionId);
+			int remaining = copyStack.stackTagCompound.getInteger("runs") - 1;
+			if (remaining == 0)
+			{
+				copyStack.stackSize--;
+				if (copyStack.stackSize <= 0)
+					copyStack = null;
+				PacketHandler.INSTANCE.sendToDimension(new MessageAtomicAssemblerItemUpdate(xCoord, yCoord, zCoord, copyStack, 0), worldObj.provider.dimensionId);
+			}
+			else
+			{
+				copyStack.stackTagCompound.setInteger("runs", remaining);
+				FundamentalData fd = FundamentalList.getFundamentalsFromStack(ItemStack.loadItemStackFromNBT(copyStack.stackTagCompound.getCompoundTag("storedItem")));
+				for (Type t : fd.getKeys())
+				{
+					copyStack.stackTagCompound.setInteger(t.name(), fd.getValue(t)*Config.fluidMultiplier);
+				}
+				PacketHandler.INSTANCE.sendToDimension(new MessageAtomicAssemblerItemUpdate(xCoord, yCoord, zCoord, copyStack, 0), worldObj.provider.dimensionId);
+			}
+		}
+	}
+	
 	@Override
 	public void writeToNBT(NBTTagCompound tag)
 	{
@@ -103,13 +142,18 @@ public class TileAtomicAssembler extends TileEntity implements ISidedInventory, 
 		
 		//Items
 		NBTTagList stackList = new NBTTagList();
-		
 		NBTTagCompound copyTag = new NBTTagCompound();
-		copyStack.writeToNBT(copyTag);
+		if (copyStack != null)
+		{
+			copyStack.writeToNBT(copyTag);
+		}
 		stackList.appendTag(copyTag);
 		copyTag = new NBTTagCompound();
-		outputStack.writeToNBT(copyTag);
-		stackList.appendTag(copyTag);
+		if (outputStack != null)
+		{
+			outputStack.writeToNBT(copyTag);
+		}
+		stackList.appendTag(copyTag);		
 		
 		tag.setTag("itemstacks", stackList);
 		
@@ -332,8 +376,31 @@ public class TileAtomicAssembler extends TileEntity implements ISidedInventory, 
 	@Override
 	public int fill(ForgeDirection from, FluidStack resource, boolean doFill) 
 	{
-		if (!this.isInProgress() || tanks == null || copyStack == null)
+		if (!this.isInProgress() || copyStack == null)
 			return 0;
+		
+		for (Type t : Type.values())
+		{
+			int num = copyStack.stackTagCompound.getInteger(t.name());
+			if (num > 0)
+			{
+				if (resource.getFluid().equals(MCFluids.fluidsEnumList.get(t)))
+				{
+					int amount = Math.min(num, resource.amount);
+					if (doFill)
+					{
+						copyStack.stackTagCompound.setInteger(t.name(), num-amount);
+						this.markDirty();
+						PacketHandler.INSTANCE.sendToDimension(new MessageAtomicAssemblerItemUpdate(xCoord, yCoord, zCoord, copyStack, 0), worldObj.provider.dimensionId);
+						if (this.isComplete())
+						{
+							this.processRun();
+						}
+					}
+					return amount;
+				}
+			}
+		}
 		
 		return 0;
 	}
@@ -352,8 +419,23 @@ public class TileAtomicAssembler extends TileEntity implements ISidedInventory, 
 	}
 
 	@Override
-	public boolean canFill(ForgeDirection from, Fluid fluid) {
-		// TODO Auto-generated method stub
+	public boolean canFill(ForgeDirection from, Fluid fluid) 
+	{
+		if (!this.isInProgress() || copyStack == null)
+			return false;
+		
+		for (Type t : Type.values())
+		{
+			int num = copyStack.stackTagCompound.getInteger(t.name());
+			if (num > 0)
+			{
+				if (fluid.equals(MCFluids.fluidsEnumList.get(t)))
+				{
+					return true;
+				}
+			}
+		}
+		
 		return false;
 	}
 
@@ -366,15 +448,19 @@ public class TileAtomicAssembler extends TileEntity implements ISidedInventory, 
 	@Override
 	public FluidTankInfo[] getTankInfo(ForgeDirection from)
 	{
-		if (tanks == null)
+		if (!this.isInProgress() || copyStack == null)
 			return null;
-		FluidTankInfo[] ret = new FluidTankInfo[tanks.length];
-		int i = 0;
-		for (FluidTank tank : tanks)
+		
+		FluidTankInfo[] ret = new FluidTankInfo[1];
+		for (Type t : Type.values())
 		{
-			ret[i] = new FluidTankInfo(tank);
-			i++;
+			int num = copyStack.stackTagCompound.getInteger(t.name());
+			if (num > 0)
+			{
+				ArrayUtils.add(ret, new FluidTankInfo(new FluidStack(MCFluids.fluidsEnumList.get(t), 0), num));
+			}
 		}
+
 		return ret;
 	}
 

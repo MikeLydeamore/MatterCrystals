@@ -73,7 +73,7 @@ public class TileCapsuleCreator extends TileEntity implements ISidedInventory, I
 					FundamentalData fd = FundamentalList.getFundamentalsFromStack(inventory[itemInputSlot]);
 					for (Type t : fd.getKeys())
 					{
-						tag.setInteger(t.name(), fd.getValue(t));
+						tag.setInteger(t.name(), fd.getValue(t)*Config.fluidMultiplier);
 					}
 					
 					

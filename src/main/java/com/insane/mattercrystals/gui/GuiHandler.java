@@ -1,7 +1,9 @@
 package com.insane.mattercrystals.gui;
 
+import com.insane.mattercrystals.gui.container.ContainerAtomicAssembler;
 import com.insane.mattercrystals.gui.container.ContainerCapsuleCreator;
 import com.insane.mattercrystals.gui.container.ContainerMatterMelter;
+import com.insane.mattercrystals.tileentity.TileAtomicAssembler;
 import com.insane.mattercrystals.tileentity.TileCapsuleCreator;
 import com.insane.mattercrystals.tileentity.TileMatterMelter;
 
@@ -13,6 +15,7 @@ public class GuiHandler implements IGuiHandler {
 
 	public static final int IDMatterMelter = 0;
 	public static final int IDCapsuleCreator = 1;
+	public static final int IDAtomicAssembler = 2;
 	
 	@Override
 	public Object getServerGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
@@ -28,6 +31,13 @@ public class GuiHandler implements IGuiHandler {
 			TileCapsuleCreator te = (TileCapsuleCreator) world.getTileEntity(x, y, z);
 			
 			return new ContainerCapsuleCreator(player.inventory, te);
+		}
+		
+		if (ID == IDAtomicAssembler)
+		{
+			TileAtomicAssembler te = (TileAtomicAssembler) world.getTileEntity(x, y, z);
+			
+			return new ContainerAtomicAssembler(player.inventory, te);
 		}
 		
 		return null;
@@ -49,6 +59,13 @@ public class GuiHandler implements IGuiHandler {
 			TileCapsuleCreator te = (TileCapsuleCreator) world.getTileEntity(x, y, z);
 			
 			return new GUICapsuleCreator(player.inventory, te);
+		}
+		
+		if (ID == IDAtomicAssembler)
+		{
+			TileAtomicAssembler te = (TileAtomicAssembler) world.getTileEntity(x, y, z);
+			
+			return new GUIAtomicAssembler(player.inventory, te);
 		}
 		
 		return null;

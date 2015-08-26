@@ -31,7 +31,7 @@ public class ItemCapsule extends Item {
 			{
 				int num = stack.stackTagCompound.getInteger(t.name());
 				if (num > 0)
-					list.add("  "+t.getLocalizedName()+": "+num);
+					list.add("  "+t.getLocalizedName()+": "+num+"mb");
 			}
 			
 			list.add(StatCollector.translateToLocal("capsule.runs.remaining")+": "+stack.stackTagCompound.getInteger("runs"));

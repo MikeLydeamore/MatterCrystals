@@ -1,6 +1,5 @@
 package com.insane.mattercrystals.gui.container;
 
-import com.insane.mattercrystals.fundamentals.FundamentalList;
 import com.insane.mattercrystals.items.MCItems;
 import com.insane.mattercrystals.tileentity.TileCapsuleCreator;
 

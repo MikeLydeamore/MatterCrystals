@@ -40,6 +40,8 @@ public class Config {
 	public static boolean assemblerEnable = true;
 	public static int assemblerRFCostPerTick = 400;
 	
+	public static int fluidMultiplier = 100;
+	
 	public static int capsuleRuns = 6;
 	
 	public Config()
