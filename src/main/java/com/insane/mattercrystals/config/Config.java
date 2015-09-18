@@ -102,7 +102,6 @@ public class Config {
 				String s = (String) it.next();
 				BasicStack stack = new BasicStack(s);
 				FundamentalList.fundamentalList.put(stack, gsonInput.get(s));
-				System.out.println(stack.item.getUnlocalizedName()+":"+FundamentalList.fundamentalList.get(stack).getValue(Type.STONE));
 			}
 		}
 		catch (IOException e)

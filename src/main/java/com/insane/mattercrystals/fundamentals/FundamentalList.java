@@ -2,7 +2,10 @@ package com.insane.mattercrystals.fundamentals;
 
 import java.util.HashMap;
 
+import net.minecraft.block.Block;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.oredict.OreDictionary;
 
 public class FundamentalList {
 
@@ -12,7 +15,26 @@ public class FundamentalList {
 	{
 
 	}
+	
+	public static void addFundamentalsToStack(String oreDict, FundamentalData fund)
+	{
+		for (ItemStack stack : OreDictionary.getOres(oreDict))
+		{
+			System.out.println(stack.getDisplayName());
+			addFundamentalsToStack(stack, fund);
+		}
+	}
 
+	public static void addFundamentalsToStack(Item item, FundamentalData fund)
+	{
+		addFundamentalsToStack(new ItemStack(item), fund);
+	}
+	
+	public static void addFundamentalsToStack(Block block, FundamentalData fund)
+	{
+		addFundamentalsToStack(new ItemStack(block), fund);
+	}
+	
 	public static void addFundamentalsToStack(ItemStack stack, FundamentalData fund)
 	{
 		BasicStack bs = new BasicStack(stack);

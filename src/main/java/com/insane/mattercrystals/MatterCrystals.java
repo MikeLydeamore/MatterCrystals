@@ -16,6 +16,7 @@ import com.google.gson.Gson;
 import com.insane.mattercrystals.blocks.MCBlocks;
 import com.insane.mattercrystals.config.Config;
 import com.insane.mattercrystals.fluids.MCFluids;
+import com.insane.mattercrystals.fundamentals.BaseFundamentals;
 import com.insane.mattercrystals.fundamentals.Fundamental.Type;
 import com.insane.mattercrystals.fundamentals.FundamentalData;
 import com.insane.mattercrystals.fundamentals.FundamentalList;
@@ -91,10 +92,9 @@ public class MatterCrystals {
 	{
 		Config.readFundamentals(fundamentalFile);
 		
-		FundamentalList.addFundamentalsToStack(new ItemStack(Blocks.cobblestone, 1, OreDictionary.WILDCARD_VALUE), new FundamentalData(Pair.of(Type.STONE, 1)));
-		FundamentalList.addFundamentalsToStack(new ItemStack(Blocks.log, 1, OreDictionary.WILDCARD_VALUE), new FundamentalData(Pair.of(Type.EARTH, 8)));
-		FundamentalList.addFundamentalsToStack(new ItemStack(Blocks.log2, 1, OreDictionary.WILDCARD_VALUE), new FundamentalData(Pair.of(Type.EARTH, 8)));
-		FundamentalList.addFundamentalsToStack(new ItemStack(Items.iron_ingot, 1, OreDictionary.WILDCARD_VALUE), new FundamentalData(Pair.of(Type.STONE, 24), Pair.of(Type.FIRE, 2)));
+		BaseFundamentals.init();
+		
+		//FundamentalList.addFundamentalsToStack(new ItemStack(Blocks.cobblestone, 1, OreDictionary.WILDCARD_VALUE), new FundamentalData(Pair.of(Type.STONE, 1)));
 		
 		//Process Fundamentals
 		Fundamentals.addRecipeProvider(VanillaCrafting.INSTANCE);
