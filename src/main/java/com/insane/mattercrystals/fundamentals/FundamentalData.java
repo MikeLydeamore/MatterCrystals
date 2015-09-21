@@ -12,6 +12,11 @@ public class FundamentalData {
 	private EnumMap<Type, Integer> map;
 	private boolean custom;
 	
+	public FundamentalData()
+	{
+		map = new EnumMap<Type, Integer>(Type.class);
+	}
+	
 	public FundamentalData(Pair<Type, Integer> ... values)
 	{
 		map = new EnumMap<Type, Integer>(Type.class);
@@ -33,6 +38,12 @@ public class FundamentalData {
 		}
 		
 		this.custom = custom;
+	}
+	
+	public FundamentalData map(Type type, int amount)
+	{
+		map.put(type, amount);
+		return this;
 	}
 	
 	public void setCustom(boolean newValue)
